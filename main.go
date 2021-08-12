@@ -35,9 +35,9 @@ func main() {
 	gin.DefaultWriter = ioutil.Discard
 	// websocket echo
 
-	r.GET("/", func(c *gin.Context) {
-		ws.Ws_connect(hub, c)
-	})
+	//r.GET("/", func(c *gin.Context) {
+	//	ws.Ws_connect(hub, c)
+	//})
 
 	r.GET("/ws", func(c *gin.Context) {
 		ws.Ws_connect(hub, c)

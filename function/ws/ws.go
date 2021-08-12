@@ -30,7 +30,6 @@ func socket_send_handle(uid string, channel chan interface{}) {
 }
 
 func Ws_connect(hub *Hub, c *gin.Context) {
-	//fmt.Println(r.Method)
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")

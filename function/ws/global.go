@@ -7,6 +7,9 @@ import (
 	"github.com/nu7hatch/gouuid"
 )
 
+var User2Conn = map[string]*websocket.Conn{}
+var Conn2User = map[*websocket.Conn]string{}
+
 type Queue struct {
 	Clients       map[*client]bool
 	Broadcast     chan []byte
