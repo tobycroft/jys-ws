@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"main.go/api"
 	"main.go/config"
-	"main.go/ws"
+	"main.go/function/ws"
 	http2 "net/http"
 	_ "net/http/pprof"
 	"time"

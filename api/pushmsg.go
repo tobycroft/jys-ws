@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
-	"main.go/ws"
+	"main.go/function/ws"
 	"net/http"
 )
 

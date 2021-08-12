@@ -15,7 +15,7 @@ type Queue struct {
 }
 
 type Hub struct {
-	clients     map[*client]bool
+	clients     map[*client]bool //这里类似我的user2conn
 	subscribe   chan *client
 	unsubscribe chan *client
 	register    chan *client
