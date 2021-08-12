@@ -27,7 +27,7 @@ func main() {
 	})
 	//http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		ws.ServeWs(w, r)
+		ws.Ws_connect(w, r)
 	})
 	http.HandleFunc("/wsjava", func(w http.ResponseWriter, r *http.Request) {
 		ws.ServeJavaWs(hub, w, r)
@@ -35,7 +35,7 @@ func main() {
 	fmt.Println("开始监听:", config.SERVER_LISTEN_PORT)
 	go http.ListenAndServe(":"+config.SERVER_LISTEN_PORT, nil)
 
-	if err := http.ListenAndServe(":"+config.SERVER_DEBUG_PORT, nil); err != nil {
+	if err := http.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
 		fmt.Printf("start pprof failed on %s\n", config.SERVER_DEBUG_PORT)
 	}
 }

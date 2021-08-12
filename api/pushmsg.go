@@ -19,7 +19,7 @@ func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
 	defer r.Body.Close()
 	body, _ := ioutil.ReadAll(r.Body)
-	message := string(body)
+	//message := string(body)
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"),r.URL,message)
 	p := ws.NewMsgPack()
 	err := json.Unmarshal(body, &p)
