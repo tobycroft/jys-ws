@@ -36,9 +36,7 @@ func main() {
 	// websocket echo
 
 	r.GET("/", func(c *gin.Context) {
-		r := c.Request
-		w := c.Writer
-		ws.Ws_connect(hub, c, w, r)
+		ws.Ws_connect(hub, c)
 	})
 
 	r.GET("/ws", func(c *gin.Context) {
@@ -54,9 +52,7 @@ func main() {
 	})
 
 	r.GET("/wsjava", func(c *gin.Context) {
-		r := c.Request
-		w := c.Writer
-		ws.ServeJavaWs(hub, w, r)
+		ws.ServeJavaWs(hub, c)
 	})
 
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT1)

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -254,22 +255,18 @@ func (c *client) write(mt int, message []byte) error {
 	return c.conn.WriteMessage(mt, message)
 }
 
-func ServeJavaWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowd", 405)
-		return
-	}
-	conn, err := upgrader.Upgrade(w, r, nil)
+func ServeJavaWs(hub *Hub, c *gin.Context) {
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	c := NewClient()
-	c.hub = hub
-	c.conn = conn
+	ac := NewClient()
+	ac.hub = hub
+	ac.conn = conn
 
-	go c.writePumpJava()
-	c.readPumpJava()
+	go ac.writePumpJava()
+	ac.readPumpJava()
 }
 
 func (c *client) writePumpJava() {
