@@ -31,6 +31,7 @@ func main() {
 	r := gin.Default()
 
 	gin.SetMode(gin.ReleaseMode)
+	gin.DisableConsoleColor()
 	gin.DefaultWriter = ioutil.Discard
 	// websocket echo
 	r.GET("/ws", func(c *gin.Context) {
