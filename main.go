@@ -2,14 +2,21 @@ package main
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"main.go/api"
 	"main.go/config"
 	"main.go/ws"
-	"net/http"
+	http2 "net/http"
 	_ "net/http/pprof"
 	"time"
 )
+
+var upgrader = websocket.Upgrader{
+	CheckOrigin: func(r *http2.Request) bool {
+		return true
+	},
+}
 
 func main() {
 
@@ -19,23 +26,37 @@ func main() {
 	timelocal, _ := time.LoadLocation("Asia/Chongqing")
 	time.Local = timelocal
 
-	http.HandleFunc("/pushmsg", func(w http.ResponseWriter, r *http.Request) {
+	r := gin.Default()
+
+	// websocket echo
+	r.GET("/ws", func(c *gin.Context) {
+		r := c.Request
+		w := c.Writer
+		ws.Ws_connect(hub, c, w, r)
+	})
+
+	r.POST("/pushmsg", func(c *gin.Context) {
+		r := c.Request
+		w := c.Writer
 		api.Pushmsg(hub, w, r) //推送消息
 	})
-	http.HandleFunc("/pushmsgarray", func(w http.ResponseWriter, r *http.Request) {
+
+	r.POST("/pushmsgarray", func(c *gin.Context) {
+		r := c.Request
+		w := c.Writer
 		api.PushmsgArray(hub, w, r) //推送消息
 	})
-	//http.HandleFunc("/", serveHome)
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
-		ws.Ws_connect(w, r)
-	})
-	http.HandleFunc("/wsjava", func(w http.ResponseWriter, r *http.Request) {
+
+	r.GET("/wsjava", func(c *gin.Context) {
+		r := c.Request
+		w := c.Writer
 		ws.ServeJavaWs(hub, w, r)
 	})
-	fmt.Println("开始监听:", config.SERVER_LISTEN_PORT)
-	go http.ListenAndServe(":"+config.SERVER_LISTEN_PORT, nil)
 
-	if err := http.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
+	fmt.Println("开始监听:", config.SERVER_LISTEN_PORT)
+	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT)
+
+	if err := http2.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
 		fmt.Printf("start pprof failed on %s\n", config.SERVER_DEBUG_PORT)
 	}
 }

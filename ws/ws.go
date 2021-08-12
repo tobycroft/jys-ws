@@ -2,8 +2,8 @@ package ws
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"log"
 	"main.go/config"
 	"main.go/tuuz/Date"
 	"net/http"
@@ -30,25 +30,46 @@ func socket_send_handle(uid string, channel chan interface{}) {
 	}
 }
 
-func Ws_connect(w http.ResponseWriter, r *http.Request) {
+func Ws_connect(hub *Hub, c *gin.Context, w http.ResponseWriter, r *http.Request) {
 	//fmt.Println(r.Method)
-	if r.Method != "GET" {
-		http.Error(w, "Method not allowd", 405)
-		return
-	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("content-type", "application/json")
-	conn, err := upgrader.Upgrade(w, r, nil)
+	if !websocket.IsWebSocketUpgrade(r) {
+		return
+	} else {
+
+		conn, err := upgrader.Upgrade(w, r, nil)
+		if err != nil {
+			fmt.Printf("err = %s\n", err)
+			return
+		}
+		ws_handler(hub, conn)
+	}
+}
+
+func ws_handler(hub *Hub, conn *websocket.Conn) {
+	//defer On_close(conn)
+	////连入时发送欢迎消息
+	//go On_connect(conn)
+	//for {
+	//	mt, d, err := conn.ReadMessage()
+	//	conn.RemoteAddr()
+	//	if mt == -1 {
+	//		break
+	//	}
+	//	if err != nil {
+	//		fmt.Println(mt)
+	//		fmt.Printf("read fail = %v\n", err)
+	//		break
+	//	}
+	//	Handler(string(d), conn)
+	//}
+
 	//ident here
 	fmt.Println(conn.RemoteAddr())
-	if err != nil {
-		log.Println(err)
-		return
-	}
 
 	c := NewClient()
-	hub := NewHub()
 	c.hub = hub
 	c.conn = conn
 
@@ -87,6 +108,7 @@ func On_close(conn *websocket.Conn) {
 
 func On_exit(conn *websocket.Conn) {
 	uid, has := Conn2User2.Load(conn)
+	//删除用户数据
 	if has {
 		Room2.Delete(uid.(string))
 		User2Conn2.Delete(uid.(string))

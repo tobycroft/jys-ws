@@ -11,9 +11,6 @@ import (
 
 func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	//func  ( h *core.Hub, w *http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", 405)
-	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("content-type", "application/json")
@@ -46,9 +43,6 @@ func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 }
 
 func PushmsgArray(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
-		http.Error(w, "Method not allowed", 405)
-	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("content-type", "application/json")
