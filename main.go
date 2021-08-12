@@ -67,7 +67,7 @@ func main() {
 
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT1)
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT2)
-	go r.RunTLS(config.SERVER_LISTEN_ADDR+":"+config.SERVER_LISTEN_PORT_SSL, "fullchain.pem", "privkey.pem")
+	go r.RunTLS(config.SERVER_LISTEN_ADDR+":"+config.SERVER_LISTEN_PORT_SSL, "cert.pem", "cert.key")
 
 	if err := http2.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
 		fmt.Printf("start pprof failed on %s\n", config.SERVER_DEBUG_PORT)
