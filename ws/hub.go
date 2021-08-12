@@ -124,7 +124,9 @@ func (h *Hub) Run() {
 							fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), "队列释放:", queue.SubscribeType)
 							queue = nil
 							if len(h.UserQueue) > 1 {
-								h.UserQueue = append(h.UserQueue[:i], h.UserQueue[i+1:]...)
+								if len(h.UserQueue) >= i {
+									h.UserQueue = append(h.UserQueue[:i], h.UserQueue[i+1:]...)
+								}
 							} else {
 								h.UserQueue = make([]*Queue, 0)
 							}
