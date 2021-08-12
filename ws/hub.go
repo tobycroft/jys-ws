@@ -154,10 +154,13 @@ func (h *Hub) Run() {
 
 func (s *Queue) Listen() {
 	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("捕获到的错误：%s\n", r)
+		}
 		close(s.Broadcast)
 		close(s.Quit)
-	}()
 
+	}()
 	for {
 		select {
 		case message := <-s.Broadcast:
