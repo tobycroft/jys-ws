@@ -9,6 +9,7 @@ import (
 
 var User2Conn = map[string]*websocket.Conn{}
 var Conn2User = map[*websocket.Conn]string{}
+var Conn2
 
 type Queue struct {
 	Clients       map[*client]bool
