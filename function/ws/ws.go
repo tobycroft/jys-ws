@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/websocket"
 	"main.go/config"
 	"main.go/tuuz/Date"
-	"net/http"
 	"sync"
 	"time"
 )
@@ -30,16 +29,15 @@ func socket_send_handle(uid string, channel chan interface{}) {
 	}
 }
 
-func Ws_connect(hub *Hub, c *gin.Context, w http.ResponseWriter, r *http.Request) {
+func Ws_connect(hub *Hub, c *gin.Context) {
 	//fmt.Println(r.Method)
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("content-type", "application/json")
-	if !websocket.IsWebSocketUpgrade(r) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("content-type", "application/json")
+	if !websocket.IsWebSocketUpgrade(c.Request) {
 		return
 	} else {
-
-		conn, err := upgrader.Upgrade(w, r, nil)
+		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			fmt.Printf("err = %s\n", err)
 			return

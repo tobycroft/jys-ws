@@ -3,18 +3,17 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
 	"main.go/function/ws"
-	"net/http"
 )
 
-func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
+func Pushmsg(h *ws.Hub, c *gin.Context) {
 	//func  ( h *core.Hub, w *http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("content-type", "application/json")
-	defer r.Body.Close()
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("content-type", "application/json")
 	body, _ := ioutil.ReadAll(r.Body)
 	//message := string(body)
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"),r.URL,message)
@@ -22,12 +21,12 @@ func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	err := json.Unmarshal(body, &p)
 	if err != nil {
 		fmt.Println("拆解推送数据包失败:", err.Error())
-		w.Write([]byte("error"))
+		c.String(200, "error")
 		return
 	}
 	if p.SocketType == "" {
 		fmt.Println("推送数据包没有类型")
-		w.Write([]byte("error"))
+		c.String(200, "error")
 		return
 	}
 	//go func() {
@@ -38,22 +37,21 @@ func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	//		}
 	//	}
 	//}()
-	w.Write([]byte("ok"))
+	c.String(200, "ok")
 	return
 }
 
-func PushmsgArray(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("content-type", "application/json")
-	defer r.Body.Close()
-	body, _ := ioutil.ReadAll(r.Body)
+func PushmsgArray(h *ws.Hub, c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("content-type", "application/json")
+	body, _ := c.GetRawData()
 	message := string(body)
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), r.URL, message)
 	data := gjson.Get(message, "data")
 	if !data.Exists() || !data.IsArray() {
 		fmt.Println("推送数据包data非法")
-		w.Write([]byte("error"))
+		c.String(200, "error")
 		return
 	}
 	go func() {
@@ -76,7 +74,6 @@ func PushmsgArray(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}()
-
-	w.Write([]byte("ok"))
+	c.String(200, "ok")
 	return
 }

@@ -46,7 +46,7 @@ func (h *Hub) Run() {
 				queue.Clients[client] = true
 				queue.SubscribeType = client.SubscribeType
 				h.UserQueue = append(h.UserQueue, queue)
-				go queue.Listen()
+				go queue.Ws_handler()
 				fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), "队列创建:", len(h.UserQueue))
 			} else {
 				queue := NewQueue()
@@ -72,7 +72,7 @@ func (h *Hub) Run() {
 					queue = NewQueue()
 					queue.SubscribeType = client.SubscribeType
 					h.UserQueue = append(h.UserQueue, queue)
-					go queue.Listen()
+					go queue.Ws_handler()
 				}
 				queue.Clients[client] = true
 			}
@@ -154,7 +154,7 @@ func (h *Hub) Run() {
 	}
 }
 
-func (s *Queue) Listen() {
+func (s *Queue) Ws_handler() {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("捕获到的错误：%s\n", r)

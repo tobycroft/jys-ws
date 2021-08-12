@@ -42,21 +42,15 @@ func main() {
 	})
 
 	r.GET("/ws", func(c *gin.Context) {
-		r := c.Request
-		w := c.Writer
-		ws.Ws_connect(hub, c, w, r)
+		ws.Ws_connect(hub, c)
 	})
 
 	r.POST("/pushmsg", func(c *gin.Context) {
-		r := c.Request
-		w := c.Writer
-		api.Pushmsg(hub, w, r) //推送消息
+		api.Pushmsg(hub, c) //推送消息
 	})
 
 	r.POST("/pushmsgarray", func(c *gin.Context) {
-		r := c.Request
-		w := c.Writer
-		api.PushmsgArray(hub, w, r) //推送消息
+		api.PushmsgArray(hub, c) //推送消息
 	})
 
 	r.GET("/wsjava", func(c *gin.Context) {
