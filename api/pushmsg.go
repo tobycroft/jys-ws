@@ -9,12 +9,10 @@ import (
 )
 
 func Pushmsg(h *ws.Hub, c *gin.Context) {
-	//func  ( h *core.Hub, w *http.ResponseWriter, r *http.Request) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")
 	body, _ := c.GetRawData()
-	//message := string(body)
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"),r.URL,message)
 	p := ws.NewMsgPack()
 	err := json.Unmarshal(body, &p)
