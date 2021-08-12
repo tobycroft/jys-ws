@@ -181,6 +181,9 @@ func (c *client) writePump() {
 	ticker := time.NewTicker(pingPeriod)
 
 	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("捕获到的错误：%s\n", r)
+		}
 		ticker.Stop()
 		c.hub.unregister <- c
 		c.conn.Close()
