@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"io/ioutil"
 	"main.go/api"
 	"main.go/config"
 	"main.go/ws"
@@ -23,11 +24,14 @@ func main() {
 	/* 创建集合 */
 	hub := ws.NewHub()
 	go hub.Run()
+
 	timelocal, _ := time.LoadLocation("Asia/Chongqing")
 	time.Local = timelocal
 
 	r := gin.Default()
 
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = ioutil.Discard
 	// websocket echo
 	r.GET("/ws", func(c *gin.Context) {
 		r := c.Request
