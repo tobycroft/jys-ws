@@ -5,12 +5,12 @@ import (
 	"fmt"
 	"github.com/tidwall/gjson"
 	"io/ioutil"
-	"main.go/core"
+	"main.go/ws"
 	"net/http"
 )
 
-func Pushmsg(h *core.Hub, w http.ResponseWriter, r *http.Request) {
-//func  ( h *core.Hub, w *http.ResponseWriter, r *http.Request) {
+func Pushmsg(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
+	//func  ( h *core.Hub, w *http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", 405)
 	}
@@ -21,7 +21,7 @@ func Pushmsg(h *core.Hub, w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	message := string(body)
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"),r.URL,message)
-	p := core.NewMsgPack()
+	p := ws.NewMsgPack()
 	err := json.Unmarshal(body, &p)
 	if err != nil {
 		fmt.Println("拆解推送数据包失败:", err.Error())
@@ -45,7 +45,7 @@ func Pushmsg(h *core.Hub, w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-func PushmsgArray(h *core.Hub, w http.ResponseWriter, r *http.Request) {
+func PushmsgArray(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Error(w, "Method not allowed", 405)
 	}

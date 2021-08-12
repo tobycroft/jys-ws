@@ -1,9 +1,13 @@
-package core
+package ws
 
 import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
+	"main.go/config"
+	"main.go/tuuz/Calc"
+	"main.go/tuuz/Date"
+	"main.go/tuuz/Jsong"
 	"net/http"
 	"sync"
 	"time"
@@ -96,6 +100,72 @@ func On_exit(conn *websocket.Conn) {
 	}
 }
 
-func Handler() {
+func Handler(json_str string, conn *websocket.Conn) {
+	if config.DEBUG {
+		fmt.Println("json_ws:", json_str)
+	}
+	json, jerr := Jsong.JObject(json_str)
+	if jerr != nil {
+		fmt.Println("jsonerr", jerr)
+		return
 
+	}
+	if config.DEBUG_WS_REQ {
+		fmt.Println("DEBUG_WS_REQ", json_str)
+	}
+	data, derr := Jsong.ParseObject(json["data"])
+	if derr != nil {
+		fmt.Println("ws_derr:", derr)
+		data = map[string]interface{}{}
+	}
+	Type := Calc.Any2String(json["type"])
+	switch Type {
+	case "init", "INIT":
+		auth_init(conn, data, Type)
+		break
+
+	case "join_room", "JOIN_ROOM":
+		join_room(conn, data, Type)
+		break
+
+	case "exit_room", "EXIT_ROOM":
+		exit_room(conn, data, Type)
+		break
+
+	case "msg_list", "MSG_LIST":
+		msg_list(conn, data, Type)
+		break
+
+	case "private_msg", "PRIVATE_MSG":
+		private_msg(conn, data, Type)
+		break
+
+	case "group_msg":
+		group_msg(conn, data, Type)
+		break
+
+	case "requst_count":
+		requst_count(conn, data, Type)
+		break
+
+	case "ping":
+		ping(conn, data, Type)
+		break
+
+	case "api":
+		api(conn, data, Type)
+		break
+
+	case "clear_private_unread":
+		clear_private_unread(conn, data, Type)
+		break
+
+	case "clear_group_unread":
+		clear_group_unread(conn, data, Type)
+		break
+
+	default:
+		fmt.Println("undefine_type:", Type)
+		break
+	}
 }
