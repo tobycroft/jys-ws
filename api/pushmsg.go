@@ -57,6 +57,11 @@ func PushmsgArray(h *ws.Hub, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Printf("捕获到的错误：%s\n", r)
+			}
+		}()
 		//根据消息类型，向指定订阅队列发广播
 		for _, queue := range h.UserQueue {
 			for i := 0; i < len(data.Array()); i++ {
