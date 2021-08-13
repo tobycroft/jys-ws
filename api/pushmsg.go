@@ -3,38 +3,55 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
 	"main.go/function/ws"
+	"os"
+	"time"
 )
 
+type pushmsg_struct struct {
+	AreaID     int    `json:"area_id"`
+	Complete   string `json:"complete"`
+	Content    string `json:"content"`
+	CurrencyID int    `json:"currency_id"`
+	In         string `json:"in"`
+	LastPrice  string `json:"last_price"`
+	LegalID    int    `json:"legal_id"`
+	Out        string `json:"out"`
+	SocketType string `json:"socket_type"`
+	Step       int    `json:"step"`
+	Type       string `json:"type"`
+}
+
 func Pushmsg(c *gin.Context) {
-	//c.Header("Access-Control-Allow-Origin", "*")
-	//c.Header("Access-Control-Allow-Headers", "Content-Type")
-	//c.Header("content-type", "application/json")
-	//body, _ := c.GetRawData()
-	////fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"),r.URL,message)
-	//p := ws.NewMsgPack()
-	//err := json.Unmarshal(body, &p)
-	//if err != nil {
-	//	fmt.Println("拆解推送数据包失败:", err.Error())
-	//	c.String(200, "error")
-	//	return
-	//}
-	//if p.SocketType == "" {
-	//	fmt.Println("推送数据包没有类型")
-	//	c.String(200, "error")
-	//	return
-	//}
-	////go func() {
-	////	//根据消息类型，向指定订阅队列发广播
-	////	for _, queue := range h.UserQueue {
-	////		if queue.SubscribeType == p.SocketType {
-	////			queue.Broadcast <- []byte(message)
-	////		}
-	////	}
-	////}()
-	//c.String(200, "ok")
-	//return
+	c.Header("Access-Control-Allow-Origin", "*")
+	c.Header("Access-Control-Allow-Headers", "Content-Type")
+	c.Header("content-type", "application/json")
+	body, _ := c.GetRawData()
+	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), body)
+	var data pushmsg_struct
+	json := jsoniter.ConfigCompatibleWithStandardLibrary
+	err := json.Unmarshal(body, &data)
+	if err != nil {
+		fmt.Println("拆解推送数据包失败:", err.Error())
+		c.String(200, "error")
+		return
+	}
+	go func(data pushmsg_struct, json string) {
+		if data.SocketType == "" {
+			fmt.Println("推送数据包没有类型")
+			c.String(200, "error")
+			return
+		}
+		var msg ws.Message
+		msg.SubscribeType = data.SocketType
+		msg.Data = json
+		ws.MessageChan <- msg
+
+	}(data, string(body))
+	c.String(200, "ok")
+	return
 }
 
 func PushmsgArray(c *gin.Context) {
@@ -43,13 +60,16 @@ func PushmsgArray(c *gin.Context) {
 	c.Header("content-type", "application/json")
 	body, _ := c.GetRawData()
 	message := string(body)
-	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), r.URL, message)
+
 	data := gjson.Get(message, "data")
 	if !data.Exists() || !data.IsArray() {
-		fmt.Println("推送数据包data非法")
+		fmt.Println("推送数据包data非法", message)
 		c.String(200, "error")
 		return
 	}
+	fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), message)
+	time.Sleep(10 * time.Hour)
+	os.Exit(1)
 	go func(data gjson.Result) {
 		//defer func() {
 		//	if r := recover(); r != nil {

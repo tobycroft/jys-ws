@@ -44,7 +44,7 @@ func main() {
 	})
 
 	r.POST("/pushmsg", func(c *gin.Context) {
-		api.PushmsgArray(c) //推送消息
+		api.Pushmsg(c) //推送消息
 	})
 
 	r.POST("/pushmsgarray", func(c *gin.Context) {
