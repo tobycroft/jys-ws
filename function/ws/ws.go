@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"main.go/config"
-	"main.go/tuuz/Date"
+	"log"
 	"sync"
-	"time"
 )
 
 var Conn2User = make(map[*websocket.Conn]string)
@@ -29,69 +27,61 @@ func socket_send_handle(uid string, channel chan interface{}) {
 	}
 }
 
-func Ws_connect(hub *Hub, c *gin.Context) {
+func Ws_connect(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")
 	if !websocket.IsWebSocketUpgrade(c.Request) {
 		return
 	} else {
+
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			fmt.Printf("err = %s\n", err)
 			return
 		}
-		ws_handler(hub, conn)
+		ws_handler(conn)
 	}
 }
 
-func ws_handler(hub *Hub, conn *websocket.Conn) {
-	//defer On_close(conn)
-	////连入时发送欢迎消息
-	//go On_connect(conn)
-	//for {
-	//	mt, d, err := conn.ReadMessage()
-	//	conn.RemoteAddr()
-	//	if mt == -1 {
-	//		break
-	//	}
-	//	if err != nil {
-	//		fmt.Println(mt)
-	//		fmt.Printf("read fail = %v\n", err)
-	//		break
-	//	}
-	//	Handler(string(d), conn)
-	//}
+func ws_handler(conn *websocket.Conn) {
+	defer On_close(conn)
+	//连入时发送欢迎消息
+	On_connect(conn)
+	for {
+		mt, d, err := conn.ReadMessage()
+		conn.RemoteAddr()
+		if mt == -1 {
+			break
+		}
+		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
+			log.Printf("error: %v", err)
+			break
+		}
+		if err != nil {
+			fmt.Println(mt)
+			fmt.Printf("read fail = %v\n", err)
+			break
+		}
+		Handler(string(d), conn)
+	}
 
-	//ident here
-	fmt.Println(conn.RemoteAddr())
-
-	c := NewClient()
-	c.hub = hub
-	c.conn = conn
-
-	hub.register <- c
-	go c.writePump()
-	c.readPump()
 }
 
 func On_connect(conn *websocket.Conn) {
-	//err := conn.WriteMessage(1, []byte("连入成功"))
-	message := map[string]interface{}{
-		"remote_addr":  conn.RemoteAddr(),
-		"connect_time": Date.Int2Date(time.Now().Unix()),
-	}
-	str := map[string]interface{}{
-		"code": 0,
-		"data": message,
-		"type": "connected",
-	}
-	err := conn.WriteJSON(str)
+	conn.WriteMessage(1, []byte("连入成功"))
+	//ident here
+	remoteaddr := conn.RemoteAddr().String()
+	fmt.Println("远程连入：", remoteaddr)
 
-	if err != nil {
-		fmt.Printf("write fail = %v\n", err)
-		return
-	}
+	Ip2Conn[remoteaddr] = conn
+	Conn2ip[conn] = remoteaddr
+
+	var info Infomation
+	Conn2info[conn] = info
+
+	//go c.writePump()
+	//c.readPump()
 }
 
 func On_close(conn *websocket.Conn) {
@@ -116,31 +106,4 @@ func On_exit(conn *websocket.Conn) {
 		User2Chan2.Delete(uid.(string))
 		Conn2User2.Delete(conn)
 	}
-}
-
-func Handler(json_str string, conn *websocket.Conn) {
-	if config.DEBUG {
-		fmt.Println("json_ws:", json_str)
-	}
-	//json, jerr := Jsong.JObject(json_str)
-	//if jerr != nil {
-	//	fmt.Println("jsonerr", jerr)
-	//	return
-	//
-	//}
-	//if config.DEBUG_WS_REQ {
-	//	fmt.Println("DEBUG_WS_REQ", json_str)
-	//}
-	//data, derr := Jsong.ParseObject(json["data"])
-	//if derr != nil {
-	//	fmt.Println("ws_derr:", derr)
-	//	data = map[string]interface{}{}
-	//}
-	//Type := Calc.Any2String(json["type"])
-	//switch Type {
-	//
-	//default:
-	//	fmt.Println("undefine_type:", Type)
-	//	break
-	//}
 }

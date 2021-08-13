@@ -22,8 +22,7 @@ var upgrader = websocket.Upgrader{
 func main() {
 
 	/* 创建集合 */
-	hub := ws.NewHub()
-	go hub.Run()
+	go ws.Run()
 
 	timelocal, _ := time.LoadLocation("Asia/Chongqing")
 	time.Local = timelocal
@@ -40,19 +39,19 @@ func main() {
 	//})
 
 	r.GET("/ws", func(c *gin.Context) {
-		ws.Ws_connect(hub, c)
+		ws.Ws_connect(c)
 	})
 
 	r.POST("/pushmsg", func(c *gin.Context) {
-		api.Pushmsg(hub, c) //推送消息
+		api.Pushmsg(c) //推送消息
 	})
 
 	r.POST("/pushmsgarray", func(c *gin.Context) {
-		api.PushmsgArray(hub, c) //推送消息
+		api.PushmsgArray(c) //推送消息
 	})
 
 	r.GET("/wsjava", func(c *gin.Context) {
-		ws.ServeJavaWs(hub, c)
+		ws.ServeJavaWs(c)
 	})
 
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT1)
@@ -61,24 +60,5 @@ func main() {
 
 	if err := http2.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
 		fmt.Printf("start pprof failed on %s\n", config.SERVER_DEBUG_PORT)
-	}
-}
-
-func ws_handler(conn *websocket.Conn) {
-	defer ws.On_close(conn)
-	//连入时发送欢迎消息
-	go ws.On_connect(conn)
-	for {
-		mt, d, err := conn.ReadMessage()
-		conn.RemoteAddr()
-		if mt == -1 {
-			break
-		}
-		if err != nil {
-			fmt.Println(mt)
-			fmt.Printf("read fail = %v\n", err)
-			break
-		}
-		ws.Handler(string(d), conn)
 	}
 }

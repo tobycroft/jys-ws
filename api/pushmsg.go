@@ -8,7 +8,7 @@ import (
 	"main.go/function/ws"
 )
 
-func Pushmsg(h *ws.Hub, c *gin.Context) {
+func Pushmsg(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")
@@ -38,7 +38,7 @@ func Pushmsg(h *ws.Hub, c *gin.Context) {
 	return
 }
 
-func PushmsgArray(h *ws.Hub, c *gin.Context) {
+func PushmsgArray( c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")

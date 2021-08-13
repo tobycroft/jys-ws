@@ -7,33 +7,22 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
-	"net/http"
 	"time"
 )
+
+var upgrader = websocket.Upgrader{
+	ReadBufferSize:  4096,
+	WriteBufferSize: 4096,
+
+	//CheckOrigin:     checkOrigin,
+}
 
 var (
 	newline = []byte{'\n'}
 	space   = []byte{' '}
 )
 
-const (
-	writeWait      = 10 * time.Second
-	pongWait       = 60 * time.Second
-	pingPeriod     = (pongWait * 9) / 10
-	maxMessageSize = 1024 * 1024
-)
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  maxMessageSize,
-	WriteBufferSize: maxMessageSize,
-	CheckOrigin:     checkOrigin,
-}
-
-func checkOrigin(r *http.Request) bool {
-	return true
-}
-
-func (h *Hub) Run() {
+func Run() {
 	for {
 		select {
 		case client := <-h.register:
@@ -208,54 +197,12 @@ func (c *client) writePump() {
 	}
 }
 
-func (c *client) readPump() {
-	defer func() {
-		c.hub.unregister <- c
-		c.conn.Close()
-	}()
-	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error {
-		c.conn.SetReadDeadline(time.Now().Add(pongWait))
-		return nil
-	})
-
-	for {
-		_, message, err := c.conn.ReadMessage()
-		if err != nil {
-			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
-				log.Printf("error: %v", err)
-			}
-			break
-		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		if string(message) == "heart" {
-			//fmt.Println("收到心跳包")
-			continue
-		}
-		//fmt.Println("收到websocket消息:", string(message))
-		//解析订阅 取消订阅
-		p := NewMsgPack()
-		err = json.Unmarshal(message, &p)
-		if err != nil {
-			fmt.Println("拆解客户端数据包失败:", err.Error())
-			continue
-		}
-		c.SubscribeType = p.SocketType
-		if p.Subscribed == 0 {
-			c.hub.unsubscribe <- c
-		} else {
-			c.hub.subscribe <- c
-		}
-	}
-}
-
 func (c *client) write(mt int, message []byte) error {
 	c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 	return c.conn.WriteMessage(mt, message)
 }
 
-func ServeJavaWs(hub *Hub, c *gin.Context) {
+func ServeJavaWs(c *gin.Context) {
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println(err)
