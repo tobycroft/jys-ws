@@ -62,7 +62,7 @@ func On_connect(conn *websocket.Conn) {
 	remoteaddr := conn.RemoteAddr().String()
 	fmt.Println("远程连入：", remoteaddr)
 
-	Ip2Conn.Store(remoteaddr, conn)
+	//Ip2Conn.Store(remoteaddr, conn)
 	Conn2ip.Store(conn, remoteaddr)
 
 	var info Infomation
@@ -81,8 +81,9 @@ func On_close(conn *websocket.Conn) {
 
 func On_exit(conn *websocket.Conn) {
 	Conn2info.Delete(conn)
-	ip, has := Conn2ip.LoadAndDelete(conn)
-	if has {
-		Ip2Conn.Delete(ip)
-	}
+	Conn2ip.Delete(conn)
+	//ip, has := Conn2ip.LoadAndDelete(conn)
+	//if has {
+	//	Ip2Conn.Delete(ip)
+	//}
 }

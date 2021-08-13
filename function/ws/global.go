@@ -6,7 +6,7 @@ import (
 )
 
 //var Ip2Conn = map[string]*websocket.Conn{}
-var Ip2Conn sync.Map
+//var Ip2Conn sync.Map
 
 //var Conn2ip = map[*websocket.Conn]string{}
 var Conn2ip sync.Map

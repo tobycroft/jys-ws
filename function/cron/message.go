@@ -22,7 +22,7 @@ func Message_recv() {
 
 func Message_send() {
 	for push := range ws.PushChan {
-		_, has := ws.Conn2ip.Load(push.Conn)
+		_, has := ws.Conn2info.Load(push.Conn)
 		if has {
 			push.Conn.WriteMessage(1, []byte(push.Data))
 			//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
