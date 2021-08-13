@@ -25,9 +25,9 @@ var (
 func Run() {
 	for {
 		select {
-		case client := <-h.register:
-			h.clients[client] = true
-			fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), "建立连接:", client.Uid)
+		//case client := <-h.register:
+		//	h.clients[client] = true
+		//	fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), "建立连接:", client.Uid)
 		case client := <-h.subscribe:
 			fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), "订阅队列:", client.Uid, client.SubscribeType)
 			//判断队列是否为空，或者队列平均人数大于100人 增加队列   || float32(len(h.clients)) / float32(len(h.UserQueue)) > 100

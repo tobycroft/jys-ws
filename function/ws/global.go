@@ -8,10 +8,10 @@ var Ip2Conn = map[string]*websocket.Conn{}
 var Conn2ip = map[*websocket.Conn]string{}
 var Conn2info = map[*websocket.Conn]Infomation{}
 
-var MessageChan = make(chan MsgPack, 20)  //use for getting message
-var PushChan = make(chan PushMessage, 20) //use for sending message
+var MessageChan = make(chan Message, 20) //use for getting message
+var PushChan = make(chan Message, 20)    //use for sending message
 
-type PushMessage struct {
+type Message struct {
 	SubscribeType string
 	Data          string
 }

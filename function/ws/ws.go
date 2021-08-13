@@ -78,6 +78,7 @@ func On_connect(conn *websocket.Conn) {
 	Conn2ip[conn] = remoteaddr
 
 	var info Infomation
+	info.SubscribeTypes = make(map[string]bool)
 	Conn2info[conn] = info
 
 	//go c.writePump()

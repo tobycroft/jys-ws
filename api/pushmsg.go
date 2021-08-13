@@ -38,7 +38,7 @@ func Pushmsg(c *gin.Context) {
 	return
 }
 
-func PushmsgArray( c *gin.Context) {
+func PushmsgArray(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")
@@ -51,26 +51,24 @@ func PushmsgArray( c *gin.Context) {
 		c.String(200, "error")
 		return
 	}
-	go func() {
-		defer func() {
-			if r := recover(); r != nil {
-				fmt.Printf("捕获到的错误：%s\n", r)
-			}
-		}()
+	go func(data gjson.Result) {
+		//defer func() {
+		//	if r := recover(); r != nil {
+		//		fmt.Printf("捕获到的错误：%s\n", r)
+		//	}
+		//}()
 		//根据消息类型，向指定订阅队列发广播
-		for _, queue := range h.UserQueue {
-			for i := 0; i < len(data.Array()); i++ {
-				if !data.Array()[i].Get("socket_type").Exists() {
-					continue
-				}
-				if queue.SubscribeType == data.Array()[i].Get("socket_type").String() {
-					msg := data.Array()[i].String()
-					//fmt.Println(msg)
-					queue.Broadcast <- []byte(msg)
-				}
+
+		for _, result := range data.Array() {
+			if !result.Get("socket_type").Exists() {
+				continue
 			}
+			var msg ws.Message
+			msg.SubscribeType = result.Get("socket_type").String()
+			msg.Data = result.String()
+			ws.MessageChan <- msg
 		}
-	}()
+	}(data)
 	c.String(200, "ok")
 	return
 }
