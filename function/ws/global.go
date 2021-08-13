@@ -29,7 +29,7 @@ type Push struct {
 
 type Infomation struct {
 	SubscribeTypes map[string]bool //订阅队列列表
-	Lock           sync.RWMutex
+	Lock           *sync.RWMutex
 }
 
 type MsgPack struct {

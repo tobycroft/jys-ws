@@ -16,15 +16,16 @@ func Message_recv() {
 			}
 			return true
 		})
-
 	}
 }
 
 func Message_send() {
 	for push := range ws.PushChan {
-		_, has := ws.Conn2info.Load(push.Conn)
+		info, has := ws.Conn2info.Load(push.Conn)
 		if has {
+			info.(ws.Infomation).Lock.Lock()
 			push.Conn.WriteMessage(1, []byte(push.Data))
+			info.(ws.Infomation).Lock.Unlock()
 			//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
 		}
 	}

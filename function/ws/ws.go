@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	http2 "net/http"
+	"sync"
 	"time"
 )
 
@@ -67,6 +68,7 @@ func On_connect(conn *websocket.Conn) {
 
 	var info Infomation
 	info.SubscribeTypes = make(map[string]bool)
+	info.Lock = &sync.RWMutex{}
 	Conn2info.Store(conn, info)
 }
 
