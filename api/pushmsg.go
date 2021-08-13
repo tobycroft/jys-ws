@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
 	"main.go/function/ws"
@@ -63,22 +64,21 @@ func PushmsgArray(c *gin.Context) {
 		//	}
 		//}()
 		//根据消息类型，向指定订阅队列发广播
-		for conn, infomation := range ws.Conn2info {
+		ws.Conn2info.Range(func(conn, infomation interface{}) bool {
 			for _, result := range data.Array() {
 				if !result.Get("socket_type").Exists() {
 					continue
 				}
-				if infomation.SubscribeTypes[result.Get("socket_type").String()] == true {
+				if infomation.(ws.Infomation).SubscribeTypes[result.Get("socket_type").String()] == true {
 					var push ws.Push
-					push.Conn = conn
+					push.Conn = conn.(*websocket.Conn)
 					push.Data = result.String()
 					ws.PushChan <- push
 				}
 
 			}
-
-		}
-
+			return true
+		})
 	}(data)
 	c.String(200, "ok")
 	return
