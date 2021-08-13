@@ -5,27 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
-	"sync"
 )
-
-var Conn2User = make(map[*websocket.Conn]string)
-
-var User2Conn2 sync.Map
-var Conn2User2 sync.Map
-var Room2 sync.Map
-
-var User2Chan2 sync.Map
-
-func socket_send_handle(uid string, channel chan interface{}) {
-	for message := range channel {
-		conn, has := User2Conn2.Load(uid)
-		if has {
-			conn.(*websocket.Conn).WriteJSON(message)
-		} else {
-			return
-		}
-	}
-}
 
 func Ws_connect(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")

@@ -23,7 +23,7 @@ var upgrader = websocket.Upgrader{
 func main() {
 
 	/* 创建集合 */
-	go ws.Run()
+	go Message()
 
 	timelocal, _ := time.LoadLocation("Asia/Chongqing")
 	time.Local = timelocal
@@ -64,7 +64,7 @@ func main() {
 	}
 }
 
-func init() {
-	cron.Message_recv()
-	cron.Message_send()
+func Message() {
+	go cron.Message_recv()
+	go cron.Message_send()
 }

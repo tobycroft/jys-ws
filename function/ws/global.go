@@ -9,11 +9,16 @@ var Conn2ip = map[*websocket.Conn]string{}
 var Conn2info = map[*websocket.Conn]Infomation{}
 
 var MessageChan = make(chan Message, 20) //use for getting message
-var PushChan = make(chan Message, 20)    //use for sending message
+var PushChan = make(chan Push, 20)       //use for sending message
 
 type Message struct {
 	SubscribeType string
 	Data          string
+}
+
+type Push struct {
+	Conn *websocket.Conn
+	Data string
 }
 
 type Infomation struct {
