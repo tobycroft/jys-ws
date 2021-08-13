@@ -6,22 +6,11 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
 	"main.go/function/ws"
-	"os"
 	"time"
 )
 
-type pushmsg_struct struct {
-	AreaID     int    `json:"area_id"`
-	Complete   string `json:"complete"`
-	Content    string `json:"content"`
-	CurrencyID int    `json:"currency_id"`
-	In         string `json:"in"`
-	LastPrice  string `json:"last_price"`
-	LegalID    int    `json:"legal_id"`
-	Out        string `json:"out"`
+type msg_struct struct {
 	SocketType string `json:"socket_type"`
-	Step       int    `json:"step"`
-	Type       string `json:"type"`
 }
 
 func Pushmsg(c *gin.Context) {
@@ -30,7 +19,7 @@ func Pushmsg(c *gin.Context) {
 	c.Header("content-type", "application/json")
 	body, _ := c.GetRawData()
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), body)
-	var data pushmsg_struct
+	var data msg_struct
 	json := jsoniter.ConfigCompatibleWithStandardLibrary
 	err := json.Unmarshal(body, &data)
 	if err != nil {
@@ -38,7 +27,7 @@ func Pushmsg(c *gin.Context) {
 		c.String(200, "error")
 		return
 	}
-	go func(data pushmsg_struct, json string) {
+	go func(data msg_struct, json string) {
 		if data.SocketType == "" {
 			fmt.Println("推送数据包没有类型")
 			c.String(200, "error")
@@ -68,8 +57,6 @@ func PushmsgArray(c *gin.Context) {
 		return
 	}
 	fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), message)
-	time.Sleep(10 * time.Hour)
-	os.Exit(1)
 	go func(data gjson.Result) {
 		//defer func() {
 		//	if r := recover(); r != nil {
