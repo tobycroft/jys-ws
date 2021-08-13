@@ -70,5 +70,8 @@ func Message() {
 	go cron.Message_send()
 	go cron.Message_send()
 	go cron.Message_send()
+	go cron.Message_send()
+	go cron.Message_send()
+	go cron.Message_send()
 	cron.Message_send()
 }
