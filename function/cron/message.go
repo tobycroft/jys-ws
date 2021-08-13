@@ -1,25 +1,29 @@
 package cron
 
 import (
+	"github.com/gorilla/websocket"
 	"main.go/function/ws"
 )
 
 func Message_recv() {
 	for message := range ws.MessageChan {
-		for conn, infomation := range ws.Conn2info {
-			if infomation.SubscribeTypes[message.SubscribeType] == true {
+		ws.Conn2info.Range(func(conn, infomation interface{}) bool {
+			if infomation.(ws.Infomation).SubscribeTypes[message.SubscribeType] == true {
 				var psh ws.Push
-				psh.Conn = conn
+				psh.Conn = conn.(*websocket.Conn)
 				psh.Data = message.Data
 				ws.PushChan <- psh
 			}
-		}
+			return true
+		})
+
 	}
 }
 
 func Message_send() {
 	for push := range ws.PushChan {
-		if ws.Conn2ip[push.Conn] != "" {
+		_, has := ws.Conn2ip.Load(push.Conn)
+		if has {
 			push.Conn.WriteJSON(push.Data)
 			//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
 		}
