@@ -44,7 +44,7 @@ func main() {
 	})
 
 	r.POST("/pushmsg", func(c *gin.Context) {
-		api.Pushmsg(c) //推送消息
+		api.PushmsgArray(c) //推送消息
 	})
 
 	r.POST("/pushmsgarray", func(c *gin.Context) {
@@ -52,7 +52,7 @@ func main() {
 	})
 
 	r.GET("/wsjava", func(c *gin.Context) {
-		ws.ServeJavaWs(c)
+		ws.Ws_connect(c)
 	})
 
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT1)
