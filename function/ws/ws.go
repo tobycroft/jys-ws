@@ -7,6 +7,7 @@ import (
 	"log"
 	"main.go/config"
 	http2 "net/http"
+	"sync"
 	"time"
 )
 
@@ -68,7 +69,8 @@ func On_connect(conn *websocket.Conn) {
 	Conn2ip.Store(conn, remoteaddr)
 
 	var info Infomation
-	info.SubscribeTypes = make(map[string]bool)
+	info.SubscribeTypes = new(sync.Map)
+
 	Conn2info.Store(conn, info)
 	Conn2Chan.Store(conn, make(chan string, 100))
 	go UserMsgChan(conn)

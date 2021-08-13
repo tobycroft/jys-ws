@@ -9,7 +9,8 @@ import (
 func Message_recv() {
 	for message := range ws.MessageChan {
 		ws.Conn2info.Range(func(conn, infomation interface{}) bool {
-			if infomation.(ws.Infomation).SubscribeTypes[message.SubscribeType] == true {
+			bo, has := infomation.(ws.Infomation).SubscribeTypes.Load(message.SubscribeType)
+			if has && bo == true {
 				var psh ws.Push
 				psh.Conn = conn.(*websocket.Conn)
 				psh.Data = message.Data

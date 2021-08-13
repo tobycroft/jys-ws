@@ -77,7 +77,8 @@ func PushmsgArray(c *gin.Context) {
 				if !result.Get("socket_type").Exists() {
 					continue
 				}
-				if infomation.(ws.Infomation).SubscribeTypes[result.Get("socket_type").String()] == true {
+				bo, has := infomation.(ws.Infomation).SubscribeTypes.Load(result.Get("socket_type").String())
+				if has && bo == true {
 					var push ws.Push
 					push.Conn = conn.(*websocket.Conn)
 					push.Data = result.String()
@@ -89,7 +90,6 @@ func PushmsgArray(c *gin.Context) {
 						break
 					}
 				}
-
 			}
 			return true
 		})
