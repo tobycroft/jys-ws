@@ -7,6 +7,7 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
 	"main.go/function/ws"
+	"time"
 )
 
 type msg_struct struct {
@@ -33,11 +34,18 @@ func Pushmsg(c *gin.Context) {
 			c.String(200, "error")
 			return
 		}
+
 		var msg ws.Message
 		msg.SubscribeType = data.SocketType
 		msg.Data = json
 
-		ws.MessageChan <- msg
+		timeout := time.NewTimer(time.Microsecond * 500)
+		select {
+		case ws.MessageChan <- msg:
+			break
+		case <-timeout.C:
+			break
+		}
 	}(data, string(body))
 	c.String(200, "ok")
 	return
@@ -73,7 +81,13 @@ func PushmsgArray(c *gin.Context) {
 					var push ws.Push
 					push.Conn = conn.(*websocket.Conn)
 					push.Data = result.String()
-					ws.PushChan <- push
+					timeout := time.NewTimer(time.Microsecond * 500)
+					select {
+					case ws.PushChan <- push:
+						break
+					case <-timeout.C:
+						break
+					}
 				}
 
 			}

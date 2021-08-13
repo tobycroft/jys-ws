@@ -3,6 +3,7 @@ package cron
 import (
 	"github.com/gorilla/websocket"
 	"main.go/function/ws"
+	"time"
 )
 
 func Message_recv() {
@@ -12,7 +13,14 @@ func Message_recv() {
 				var psh ws.Push
 				psh.Conn = conn.(*websocket.Conn)
 				psh.Data = message.Data
-				ws.PushChan <- psh
+
+				timeout := time.NewTimer(time.Microsecond * 500)
+				select {
+				case ws.PushChan <- psh:
+					break
+				case <-timeout.C:
+					break
+				}
 			}
 			return true
 		})
@@ -25,7 +33,13 @@ func Message_send() {
 		if has {
 			cc, has := ws.Conn2Chan.Load(push.Conn)
 			if has {
-				cc.(chan string) <- push.Data
+				timeout := time.NewTimer(time.Microsecond * 500)
+				select {
+				case cc.(chan string) <- push.Data:
+					break
+				case <-timeout.C:
+					break
+				}
 			}
 			//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
 		}
