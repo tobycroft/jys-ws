@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"main.go/api"
 	"main.go/config"
+	"main.go/function/cron"
 	"main.go/function/ws"
 	http2 "net/http"
 	_ "net/http/pprof"
@@ -61,4 +62,9 @@ func main() {
 	if err := http2.ListenAndServe("0.0.0.0:"+config.SERVER_DEBUG_PORT, nil); err != nil {
 		fmt.Printf("start pprof failed on %s\n", config.SERVER_DEBUG_PORT)
 	}
+}
+
+func init() {
+	cron.Message_recv()
+	cron.Message_send()
 }

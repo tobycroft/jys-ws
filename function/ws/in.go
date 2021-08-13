@@ -25,7 +25,7 @@ func Handler(json_str string, conn *websocket.Conn) {
 
 	if msg.Subscribed == 0 {
 		//info := Conn2info[conn]
-		Conn2info[conn].SubscribeTypes[msg.SocketType] = false
+		delete(Conn2info[conn].SubscribeTypes, msg.SocketType)
 	} else {
 		Conn2info[conn].SubscribeTypes[msg.SocketType] = true
 	}
