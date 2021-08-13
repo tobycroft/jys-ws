@@ -61,30 +61,19 @@ func On_connect(conn *websocket.Conn) {
 	info.SubscribeTypes = make(map[string]bool)
 	Conn2info[conn] = info
 
-	//go c.writePump()
-	//c.readPump()
 }
 
 func On_close(conn *websocket.Conn) {
 	On_exit(conn)
 	// 发送 websocket 结束包
-	conn.WriteMessage(websocket.CloseMessage,
-		websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+
 	// 真正关闭 conn
 	conn.Close()
 }
 
 func On_exit(conn *websocket.Conn) {
-	uid, has := Conn2User2.Load(conn)
-	//删除用户数据
-	if has {
-		Room2.Delete(uid.(string))
-		User2Conn2.Delete(uid.(string))
-		ch, has := User2Chan2.Load(uid.(string))
-		if has {
-			ch.(chan interface{}) <- "close"
-		}
-		User2Chan2.Delete(uid.(string))
-		Conn2User2.Delete(conn)
-	}
+	delete(Ip2Conn, Conn2ip[conn])
+	delete(Conn2info, conn)
+	delete(Conn2ip, conn)
 }
