@@ -1,16 +1,5 @@
 package ws
 
-import (
-	"github.com/gorilla/websocket"
-	http2 "net/http"
-)
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http2.Request) bool {
-		return true
-	},
-}
-
 //func Run() {
 //	for {
 //		select {

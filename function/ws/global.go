@@ -2,11 +2,17 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
+	"sync"
 )
 
-var Ip2Conn = map[string]*websocket.Conn{}
-var Conn2ip = map[*websocket.Conn]string{}
-var Conn2info = map[*websocket.Conn]Infomation{}
+//var Ip2Conn = map[string]*websocket.Conn{}
+var Ip2Conn sync.Map
+
+//var Conn2ip = map[*websocket.Conn]string{}
+var Conn2ip sync.Map
+
+//var Conn2info = map[*websocket.Conn]Infomation{}
+var Conn2info sync.Map
 
 var MessageChan = make(chan Message, 100) //use for getting message
 var PushChan = make(chan Push, 100)       //use for sending message

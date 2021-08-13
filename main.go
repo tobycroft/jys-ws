@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
 	"io/ioutil"
 	"main.go/api"
 	"main.go/config"
@@ -13,12 +12,6 @@ import (
 	_ "net/http/pprof"
 	"time"
 )
-
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http2.Request) bool {
-		return true
-	},
-}
 
 func main() {
 
@@ -70,5 +63,9 @@ func Message() {
 	go cron.Message_recv()
 	go cron.Message_recv()
 	go cron.Message_recv()
+	//go cron.Message_send()
+	//go cron.Message_send()
+	//go cron.Message_send()
+	//go cron.Message_send()
 	cron.Message_send()
 }

@@ -5,7 +5,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
+	http2 "net/http"
+	"time"
 )
+
+var upgrader = websocket.Upgrader{
+	HandshakeTimeout: 5 * time.Second,
+	CheckOrigin: func(r *http2.Request) bool {
+		return true
+	},
+}
 
 func Ws_connect(c *gin.Context) {
 	c.Header("Access-Control-Allow-Origin", "*")
@@ -53,13 +62,12 @@ func On_connect(conn *websocket.Conn) {
 	remoteaddr := conn.RemoteAddr().String()
 	fmt.Println("远程连入：", remoteaddr)
 
-	Ip2Conn[remoteaddr] = conn
-	Conn2ip[conn] = remoteaddr
+	Ip2Conn.Store(remoteaddr, conn)
+	Conn2ip.Store(conn, remoteaddr)
 
 	var info Infomation
 	info.SubscribeTypes = make(map[string]bool)
-	Conn2info[conn] = info
-
+	Conn2info.Store(conn, info)
 }
 
 func On_close(conn *websocket.Conn) {
@@ -72,7 +80,9 @@ func On_close(conn *websocket.Conn) {
 }
 
 func On_exit(conn *websocket.Conn) {
-	delete(Ip2Conn, Conn2ip[conn])
-	delete(Conn2info, conn)
-	delete(Conn2ip, conn)
+	Conn2info.Delete(conn)
+	ip, has := Conn2ip.LoadAndDelete(conn)
+	if has {
+		Ip2Conn.Delete(ip)
+	}
 }

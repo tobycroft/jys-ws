@@ -69,11 +69,11 @@ func PushmsgArray(c *gin.Context) {
 					continue
 				}
 				if infomation.SubscribeTypes[result.Get("socket_type").String()] == true {
-					msg.SubscribeType = result.Get("socket_type").String()
-					msg.Data = result.String()
-					ws.MessageChan <- msg
+					var push ws.Push
+					push.Conn = conn
+					push.Data = result.String()
+					ws.PushChan <- push
 				}
-				var msg ws.Message
 
 			}
 
