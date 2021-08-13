@@ -29,61 +29,10 @@ type Push struct {
 
 type Infomation struct {
 	SubscribeTypes map[string]bool //订阅队列列表
+	Lock           sync.RWMutex
 }
 
 type MsgPack struct {
 	SocketType string `json:"socket_type"` //消息类型
 	Subscribed int    `json:"subscribed"`  //1订阅 0取消订阅
 }
-
-//type Queue struct {
-//	Clients       map[*client]bool
-//	Broadcast     chan []byte
-//	Quit          chan []byte
-//	SubscribeType string //所属订阅队列
-//}
-
-//type Hub struct {
-//	clients     map[*client]bool //这里类似我的user2conn
-//	subscribe   chan *client
-//	unsubscribe chan *client
-//	register    chan *client
-//	unregister  chan *client
-//	UserQueue   []*Queue
-//}
-
-//type client struct {
-//	hub            *Hub
-//	conn           *websocket.Conn
-//	send           chan []byte
-//	Uid            string
-//	SubscribeType  string   //订阅队列
-//	SubscribeTypes []string //订阅队列列表
-//}
-
-//func NewHub() *Hub {
-//	return &Hub{
-//		subscribe:   make(chan *client),
-//		unsubscribe: make(chan *client),
-//		register:    make(chan *client),
-//		unregister:  make(chan *client),
-//		clients:     make(map[*client]bool),
-//	}
-//}
-
-//func NewClient() *client {
-//	return &client{
-//		send:           make(chan []byte, maxMessageSize),
-//		Uid:            Uuid(),
-//		SubscribeType:  "",
-//		SubscribeTypes: []string{},
-//	}
-//}
-
-//func NewQueue() *Queue {
-//	return &Queue{
-//		Clients:   make(map[*client]bool),
-//		Broadcast: make(chan []byte),
-//		Quit:      make(chan []byte),
-//	}
-//}
