@@ -11,7 +11,8 @@ import (
 //var Conn2ip = map[*websocket.Conn]string{}
 var Conn2ip sync.Map
 
-var Conn2Chan = make(chan string, 100)
+//var Conn2Chan = map[*websocket.Conn]chan string{}
+var Conn2Chan sync.Map
 
 //var Conn2info = map[*websocket.Conn]Infomation{}
 var Conn2info sync.Map

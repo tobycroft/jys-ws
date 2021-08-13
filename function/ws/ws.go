@@ -83,6 +83,7 @@ func On_close(conn *websocket.Conn) {
 func On_exit(conn *websocket.Conn) {
 	Conn2info.Delete(conn)
 	Conn2ip.Delete(conn)
+
 	//ip, has := Conn2ip.LoadAndDelete(conn)
 	//if has {
 	//	Ip2Conn.Delete(ip)
