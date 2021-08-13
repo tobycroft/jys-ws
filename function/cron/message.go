@@ -23,9 +23,12 @@ func Message_send() {
 	for push := range ws.PushChan {
 		info, has := ws.Conn2info.Load(push.Conn)
 		if has {
-			info.(ws.Infomation).Lock.Lock()
-			push.Conn.WriteMessage(1, []byte(push.Data))
-			info.(ws.Infomation).Lock.Unlock()
+			go func(data string) {
+				info.(ws.Infomation).Lock.Lock()
+				push.Conn.WriteMessage(1, []byte(data))
+				info.(ws.Infomation).Lock.Unlock()
+			}(push.Data)
+
 			//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
 		}
 	}

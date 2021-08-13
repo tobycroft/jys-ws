@@ -11,6 +11,8 @@ import (
 //var Conn2ip = map[*websocket.Conn]string{}
 var Conn2ip sync.Map
 
+var Conn2Chan = make(chan string, 100)
+
 //var Conn2info = map[*websocket.Conn]Infomation{}
 var Conn2info sync.Map
 
@@ -29,7 +31,6 @@ type Push struct {
 
 type Infomation struct {
 	SubscribeTypes map[string]bool //订阅队列列表
-	Lock           *sync.RWMutex
 }
 
 type MsgPack struct {

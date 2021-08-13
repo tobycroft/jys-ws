@@ -36,6 +36,7 @@ func Pushmsg(c *gin.Context) {
 		var msg ws.Message
 		msg.SubscribeType = data.SocketType
 		msg.Data = json
+
 		ws.MessageChan <- msg
 	}(data, string(body))
 	c.String(200, "ok")
