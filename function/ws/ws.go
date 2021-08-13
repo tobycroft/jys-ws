@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"log"
+	"main.go/config"
 	http2 "net/http"
 	"time"
 )
@@ -60,8 +61,9 @@ func On_connect(conn *websocket.Conn) {
 	//conn.WriteMessage(1, []byte("连入成功"))
 	//ident here
 	remoteaddr := conn.RemoteAddr().String()
-	fmt.Println("远程连入：", remoteaddr)
-
+	if config.DEBUG {
+		fmt.Println("远程连入：", remoteaddr)
+	}
 	//Ip2Conn.Store(remoteaddr, conn)
 	Conn2ip.Store(conn, remoteaddr)
 
