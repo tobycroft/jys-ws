@@ -8,8 +8,8 @@ var Ip2Conn = map[string]*websocket.Conn{}
 var Conn2ip = map[*websocket.Conn]string{}
 var Conn2info = map[*websocket.Conn]Infomation{}
 
-var MessageChan = make(chan Message, 20) //use for getting message
-var PushChan = make(chan Push, 20)       //use for sending message
+var MessageChan = make(chan Message, 100) //use for getting message
+var PushChan = make(chan Push, 100)       //use for sending message
 
 type Message struct {
 	SubscribeType string
@@ -23,6 +23,11 @@ type Push struct {
 
 type Infomation struct {
 	SubscribeTypes map[string]bool //订阅队列列表
+}
+
+type MsgPack struct {
+	SocketType string `json:"socket_type"` //消息类型
+	Subscribed int    `json:"subscribed"`  //1订阅 0取消订阅
 }
 
 //type Queue struct {
@@ -49,11 +54,6 @@ type Infomation struct {
 //	SubscribeType  string   //订阅队列
 //	SubscribeTypes []string //订阅队列列表
 //}
-
-type MsgPack struct {
-	SocketType string `json:"socket_type"` //消息类型
-	Subscribed int    `json:"subscribed"`  //1订阅 0取消订阅
-}
 
 //func NewHub() *Hub {
 //	return &Hub{
