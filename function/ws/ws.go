@@ -68,6 +68,7 @@ func On_connect(conn *websocket.Conn) {
 	var info Infomation
 	info.SubscribeTypes = make(map[string]bool)
 	Conn2info.Store(conn, info)
+	Conn2Chan.Store(conn, make(chan string, 100))
 	go UserMsgChan(conn)
 }
 
