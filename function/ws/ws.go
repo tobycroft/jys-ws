@@ -14,7 +14,6 @@ func Ws_connect(c *gin.Context) {
 	if !websocket.IsWebSocketUpgrade(c.Request) {
 		return
 	} else {
-
 		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 		if err != nil {
 			fmt.Printf("err = %s\n", err)
@@ -49,7 +48,7 @@ func ws_handler(conn *websocket.Conn) {
 }
 
 func On_connect(conn *websocket.Conn) {
-	conn.WriteMessage(1, []byte("连入成功"))
+	//conn.WriteMessage(1, []byte("连入成功"))
 	//ident here
 	remoteaddr := conn.RemoteAddr().String()
 	fmt.Println("远程连入：", remoteaddr)

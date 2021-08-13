@@ -7,12 +7,12 @@ import (
 func Message_recv() {
 	for message := range ws.MessageChan {
 		for conn, infomation := range ws.Conn2info {
-			if infomation.SubscribeTypes[message.SubscribeType] == true {
-				var psh ws.Push
-				psh.Conn = conn
-				psh.Data = message.Data
-				ws.PushChan <- psh
-			}
+			//		if infomation.SubscribeTypes[message.SubscribeType] == true {
+			var psh ws.Push
+			psh.Conn = conn
+			psh.Data = message.Data
+			ws.PushChan <- psh
+			//}
 		}
 	}
 }

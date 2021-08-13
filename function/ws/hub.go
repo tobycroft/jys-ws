@@ -2,19 +2,14 @@ package ws
 
 import (
 	"github.com/gorilla/websocket"
+	http2 "net/http"
 )
 
 var upgrader = websocket.Upgrader{
-	ReadBufferSize:  4096,
-	WriteBufferSize: 4096,
-
-	//CheckOrigin:     checkOrigin,
+	CheckOrigin: func(r *http2.Request) bool {
+		return true
+	},
 }
-
-var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
-)
 
 //func Run() {
 //	for {

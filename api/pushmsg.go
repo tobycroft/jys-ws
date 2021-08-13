@@ -6,7 +6,6 @@ import (
 	jsoniter "github.com/json-iterator/go"
 	"github.com/tidwall/gjson"
 	"main.go/function/ws"
-	"time"
 )
 
 type msg_struct struct {
@@ -56,7 +55,7 @@ func PushmsgArray(c *gin.Context) {
 		c.String(200, "error")
 		return
 	}
-	fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), message)
+	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), message)
 	go func(data gjson.Result) {
 		//defer func() {
 		//	if r := recover(); r != nil {
@@ -64,16 +63,22 @@ func PushmsgArray(c *gin.Context) {
 		//	}
 		//}()
 		//根据消息类型，向指定订阅队列发广播
+		for conn, infomation := range ws.Conn2info {
+			for _, result := range data.Array() {
+				if !result.Get("socket_type").Exists() {
+					continue
+				}
+				if infomation.SubscribeTypes[result.Get("socket_type").String()] == true {
+					msg.SubscribeType = result.Get("socket_type").String()
+					msg.Data = result.String()
+					ws.MessageChan <- msg
+				}
+				var msg ws.Message
 
-		for _, result := range data.Array() {
-			if !result.Get("socket_type").Exists() {
-				continue
 			}
-			var msg ws.Message
-			msg.SubscribeType = result.Get("socket_type").String()
-			msg.Data = result.String()
-			ws.MessageChan <- msg
+
 		}
+
 	}(data)
 	c.String(200, "ok")
 	return
