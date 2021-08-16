@@ -90,11 +90,17 @@ func On_exit(conn *websocket.Conn) {
 	Conn2ip.Delete(conn)
 	ccc, has := Conn2Chan.Load(conn)
 	if has {
-		ccc.(chan string) <- "123"
+		timeout := time.NewTimer(time.Microsecond * 500)
+		select {
+		case ccc.(chan string) <- "close":
+			break
+		case <-timeout.C:
+			break
+		}
+		Conn2Chan.Delete(conn)
+		//ip, has := Conn2ip.LoadAndDelete(conn)
+		//if has {
+		//	Ip2Conn.Delete(ip)
+		//}
 	}
-	Conn2Chan.Delete(conn)
-	//ip, has := Conn2ip.LoadAndDelete(conn)
-	//if has {
-	//	Ip2Conn.Delete(ip)
-	//}
 }

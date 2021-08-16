@@ -18,6 +18,9 @@ func UserMsgChan(conn *websocket.Conn) {
 			if !has {
 				return
 			}
+			if data == "close" {
+				return
+			}
 
 			conn.WriteMessage(1, []byte(data))
 		}
