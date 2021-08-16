@@ -23,8 +23,8 @@ func main() {
 
 	r := gin.Default()
 
-	gin.SetMode(gin.ReleaseMode)
-	gin.DisableConsoleColor()
+	//gin.SetMode(gin.ReleaseMode)
+	//gin.DisableConsoleColor()
 	gin.DefaultWriter = ioutil.Discard
 	// websocket echo
 
