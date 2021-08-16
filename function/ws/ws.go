@@ -78,7 +78,7 @@ func On_connect(conn *websocket.Conn) {
 
 func On_close(conn *websocket.Conn) {
 	// 发送 websocket 结束包
-	conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	//conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 
 	// 真正关闭 conn
 	conn.Close()
