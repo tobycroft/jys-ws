@@ -35,17 +35,24 @@ func Pushmsg(c *gin.Context) {
 			return
 		}
 
-		var msg ws.Message
-		msg.SubscribeType = data.SocketType
-		msg.Data = json
+		ws.Conn2info.Range(func(conn, infomation interface{}) bool {
+			bo, has := infomation.(ws.Infomation).SubscribeTypes.Load(data.SocketType)
+			if has && bo == true {
+				var psh ws.Push
+				psh.Conn = conn.(*websocket.Conn)
+				psh.Data = json
 
-		timeout := time.NewTimer(time.Microsecond * 500)
-		select {
-		case ws.MessageChan <- msg:
-			break
-		case <-timeout.C:
-			break
-		}
+				timeout := time.NewTimer(time.Microsecond * 500)
+				select {
+				case ws.PushChan <- psh:
+					break
+				case <-timeout.C:
+					break
+				}
+			}
+
+			return true
+		})
 	}(data, string(body))
 	c.String(200, "ok")
 	return
