@@ -58,14 +58,14 @@ func main() {
 }
 
 func Message() {
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
-	go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
+	//go cron.Message_recv()
 	go cron.Message_send()
 	go cron.Message_send()
 	go cron.Message_send()
