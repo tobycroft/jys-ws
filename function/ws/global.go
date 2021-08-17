@@ -17,8 +17,8 @@ var Conn2Chan sync.Map
 //var Conn2info = map[*websocket.Conn]Infomation{}
 var Conn2info sync.Map
 
-var MessageChan = make(chan Message, 100) //use for getting message
-var PushChan = make(chan Push, 100)       //use for sending message
+var MessageChan = make(chan Message, 1024) //use for getting message
+var PushChan = make(chan Push, 1024)       //use for sending message
 
 type Message struct {
 	SubscribeType string
