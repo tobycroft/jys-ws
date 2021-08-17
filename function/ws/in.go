@@ -44,7 +44,6 @@ func Handler(json_str string, conn *websocket.Conn) {
 			info.(Infomation).SubscribeTypes.Store(msg.SocketType, true)
 			//info.(Infomation).SubscribeTypes[msg.SocketType] = true
 			Conn2info.Store(conn, info)
-
 		}
 	}
 }
