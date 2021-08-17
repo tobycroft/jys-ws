@@ -12,14 +12,14 @@ import (
 )
 
 var upgrader = websocket.Upgrader{
-	HandshakeTimeout: 5 * time.Second,
+	HandshakeTimeout: 3 * time.Second,
 	CheckOrigin: func(r *http2.Request) bool {
 		return true
 	},
 }
 
 var upgrader_compress = websocket.Upgrader{
-	HandshakeTimeout: 5 * time.Second,
+	HandshakeTimeout: 3 * time.Second,
 	CheckOrigin: func(r *http2.Request) bool {
 		return true
 	},
