@@ -18,6 +18,14 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+var upgrader_compress = websocket.Upgrader{
+	HandshakeTimeout: 5 * time.Second,
+	CheckOrigin: func(r *http2.Request) bool {
+		return true
+	},
+	EnableCompression: true,
+}
+
 func Ws_connect(c *gin.Context, compress bool) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
@@ -25,12 +33,22 @@ func Ws_connect(c *gin.Context, compress bool) {
 	if !websocket.IsWebSocketUpgrade(c.Request) {
 		return
 	} else {
-		conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
-		if err != nil {
-			fmt.Printf("err = %s\n", err)
-			return
+		if compress {
+			conn, err := upgrader_compress.Upgrade(c.Writer, c.Request, nil)
+			if err != nil {
+				fmt.Printf("err = %s\n", err)
+				return
+			}
+			ws_handler(conn, compress)
+		} else {
+			conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+			if err != nil {
+				fmt.Printf("err = %s\n", err)
+				return
+			}
+			ws_handler(conn, compress)
 		}
-		ws_handler(conn, compress)
+
 	}
 }
 

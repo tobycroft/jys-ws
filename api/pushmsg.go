@@ -73,14 +73,9 @@ func PushmsgArray(c *gin.Context) {
 	}
 	//fmt.Println(time.Now().Local().Format("2006-01-02 15:04:05"), message)
 	go func(data gjson.Result) {
-		//defer func() {
-		//	if r := recover(); r != nil {
-		//		fmt.Printf("捕获到的错误：%s\n", r)
-		//	}
-		//}()
-		//根据消息类型，向指定订阅队列发广播
+		arr := data.Array()
 		ws.Conn2info.Range(func(conn, infomation interface{}) bool {
-			for _, result := range data.Array() {
+			for _, result := range arr {
 				if !result.Get("socket_type").Exists() {
 					continue
 				}

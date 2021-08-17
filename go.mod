@@ -3,6 +3,7 @@ module main.go
 go 1.16
 
 require (
+	github.com/euforia/websocket v0.0.0-20160427162127-f747c3f35c92 // indirect
 	github.com/gin-gonic/gin v1.7.3 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/json-iterator/go v1.1.9 // indirect
