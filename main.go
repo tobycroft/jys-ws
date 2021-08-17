@@ -33,7 +33,11 @@ func main() {
 	//})
 
 	r.GET("/ws", func(c *gin.Context) {
-		ws.Ws_connect(c)
+		ws.Ws_connect(c, false)
+	})
+
+	r.GET("/wsc", func(c *gin.Context) {
+		ws.Ws_connect(c, true)
 	})
 
 	r.POST("/pushmsg", func(c *gin.Context) {
@@ -45,7 +49,7 @@ func main() {
 	})
 
 	r.GET("/wsjava", func(c *gin.Context) {
-		ws.Ws_connect(c)
+		ws.Ws_connect(c, false)
 	})
 
 	go r.Run(config.SERVER_LISTEN_ADDR + ":" + config.SERVER_LISTEN_PORT1)

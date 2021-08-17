@@ -33,6 +33,7 @@ type Push struct {
 type Infomation struct {
 	//SubscribeTypes map[string]bool //订阅队列列表
 	SubscribeTypes *sync.Map //订阅队列列表
+	IsCompress     bool
 }
 
 type MsgPack struct {

@@ -18,7 +18,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func Ws_connect(c *gin.Context) {
+func Ws_connect(c *gin.Context, compress bool) {
 	c.Header("Access-Control-Allow-Origin", "*")
 	c.Header("Access-Control-Allow-Headers", "Content-Type")
 	c.Header("content-type", "application/json")
@@ -30,11 +30,11 @@ func Ws_connect(c *gin.Context) {
 			fmt.Printf("err = %s\n", err)
 			return
 		}
-		ws_handler(conn)
+		ws_handler(conn, compress)
 	}
 }
 
-func ws_handler(conn *websocket.Conn) {
+func ws_handler(conn *websocket.Conn, compress bool) {
 	defer On_close(conn)
 	//连入时发送欢迎消息
 	On_connect(conn)
