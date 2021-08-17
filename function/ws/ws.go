@@ -40,18 +40,18 @@ func ws_handler(conn *websocket.Conn) {
 	On_connect(conn)
 	for {
 		mt, d, err := conn.ReadMessage()
-		conn.RemoteAddr()
+		//conn.RemoteAddr()
 		if mt == -1 {
-			break
+			return
 		}
 		if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway) {
 			log.Printf("error: %v", err)
-			break
+			return
 		}
 		if err != nil {
 			fmt.Println(mt)
 			fmt.Printf("read fail = %v\n", err)
-			break
+			return
 		}
 		Handler(string(d), conn)
 	}
