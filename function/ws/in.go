@@ -35,10 +35,10 @@ func Handler(json_str string, conn *websocket.Conn) {
 		info, has := Conn2info.Load(conn)
 		if has {
 			//替换模式，只能关注一种数据的模式
-			//info.(Infomation).SubscribeTypes.Range(func(key, value interface{}) bool {
-			//	info.(Infomation).SubscribeTypes.Delete(key)
-			//	return true
-			//})
+			info.(Infomation).SubscribeTypes.Range(func(key, value interface{}) bool {
+				info.(Infomation).SubscribeTypes.Delete(key)
+				return true
+			})
 
 			//同时关注模式
 			info.(Infomation).SubscribeTypes.Store(msg.SocketType, true)
