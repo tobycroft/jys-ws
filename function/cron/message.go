@@ -30,16 +30,20 @@ func Message_recv() {
 
 func Message_send() {
 	for push := range ws.PushChan {
-		cc, has := ws.Conn2Chan.Load(push.Conn)
-		if has {
-			timeout := time.NewTimer(time.Microsecond * 500)
-			select {
-			case cc.(chan string) <- push.Data:
-				break
-			case <-timeout.C:
-				break
-			}
-		}
-		//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
+		go msg_send(push)
 	}
+}
+
+func msg_send(push ws.Push) {
+	cc, has := ws.Conn2Chan.Load(push.Conn)
+	if has {
+		timeout := time.NewTimer(time.Microsecond * 500)
+		select {
+		case cc.(chan string) <- push.Data:
+			break
+		case <-timeout.C:
+			break
+		}
+	}
+	//push.Conn.(*websocket.Conn).WriteJSON(push.Data)
 }
